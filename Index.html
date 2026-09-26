@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACE CPT Interactive Practice Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-indigo-900 text-white shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-dumbbell text-2xl text-amber-400"></i>
+                <h1 class="text-xl font-bold tracking-wide">ACE CPT Exam Trainer</h1>
+            </div>
+            <div id="header-status" class="text-sm font-medium bg-indigo-800 px-3 py-1 rounded-full text-indigo-200">
+                Setup Mode
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- SETUP VIEW -->
+        <div id="view-setup" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Configure Your Practice Test</h2>
+                <p class="text-slate-600">Select one or more domains you wish to focus on. Questions will be dynamically pulled according to the official ACE CPT Exam Content Outline.</p>
+            </div>
+
+            <!-- Domain Selection List -->
+            <div class="space-y-3">
+                <label class="block text-sm font-semibold text-slate-700 uppercase tracking-wider">Select Domains:</label>
+                
+                <div class="space-y-2">
+                    <label class="flex items-start p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 cursor-pointer transition">
+                        <input type="checkbox" name="domain-select" value="Domain I" checked class="mt-1 h-5 w-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        <div class="ml-3">
+                            <span class="font-bold text-slate-900 block">Domain I: Client Onboarding and Assessments (23%)</span>
+                            <span class="text-sm text-slate-500">Pre-participation screening, interviewing, postural/movement assessments, baseline fitness tests.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 cursor-pointer transition">
+                        <input type="checkbox" name="domain-select" value="Domain II" checked class="mt-1 h-5 w-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        <div class="ml-3">
+                            <span class="font-bold text-slate-900 block">Domain II: Program Design and Implementation (31%)</span>
+                            <span class="text-sm text-slate-500">IFT model, goal setting, exercise principles, cardiorespiratory and muscular training progression.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 cursor-pointer transition">
+                        <input type="checkbox" name="domain-select" value="Domain III" checked class="mt-1 h-5 w-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        <div class="ml-3">
+                            <span class="font-bold text-slate-900 block">Domain III: Ongoing Coaching and Behavior Change (26%)</span>
+                            <span class="text-sm text-slate-500">Client-centered communication, adherence strategies, behavior change theories, overcoming barriers.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 cursor-pointer transition">
+                        <input type="checkbox" name="domain-select" value="Domain IV" checked class="mt-1 h-5 w-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        <div class="ml-3">
+                            <span class="font-bold text-slate-900 block">Domain IV: Professional Practice, Safety, and Risk Management (20%)</span>
+                            <span class="text-sm text-slate-500">Scope of practice, legal/liability considerations, emergency procedures, professional ethics.</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question Count Setting -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-100">
+                <div>
+                    <label for="question-count" class="block text-sm font-semibold text-slate-700">Number of Questions:</label>
+                    <span class="text-xs text-slate-500">Choose how many questions you want to tackle in this session.</span>
+                </div>
+                <select id="question-count" class="bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <option value="5">5 Questions (Quick Test)</option>
+                    <option value="10" selected>10 Questions (Standard)</option>
+                    <option value="20">20 Questions (Extended)</option>
+                    <option value="all">All Available Questions</option>
+                </select>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2">
+                    <span>Start Practice Session</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- QUIZ VIEW -->
+        <div id="view-quiz" class="hidden space-y-6">
+            <!-- Progress Bar Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span id="quiz-domain-tag" class="text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-md">Domain I</span>
+                    <h3 id="question-counter" class="text-lg font-bold text-slate-900 mt-2">Question 1 of 10</h3>
+                </div>
+                <div class="w-full sm:w-48 bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 10%;"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <p id="question-text" class="text-lg sm:text-xl font-semibold text-slate-900 leading-relaxed"></p>
+
+                <!-- Options List -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Dynamically populated options -->
+                </div>
+
+                <!-- Feedback Box (Hidden initially) -->
+                <div id="feedback-box" class="hidden rounded-xl p-5 border transition-all">
+                    <div class="flex items-center space-x-2 mb-2 font-bold text-base" id="feedback-title">
+                        <i id="feedback-icon" class="fa-solid"></i>
+                        <span id="feedback-heading-text"></span>
+                    </div>
+                    <p id="feedback-rationale" class="text-sm leading-relaxed text-slate-700"></p>
+                </div>
+
+                <!-- Action Button -->
+                <div class="flex justify-end pt-4 border-t border-slate-100">
+                    <button id="action-btn" onclick="handleAction()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Submit Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS VIEW -->
+        <div id="view-results" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 text-center space-y-4">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-50 text-indigo-600 text-3xl mb-2">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Practice Session Completed!</h2>
+                <p class="text-slate-600 max-w-md mx-auto">Here is how you performed across the selected ACE CPT exam domains.</p>
+                
+                <div class="py-4">
+                    <span id="final-score-display" class="text-5xl font-black text-indigo-600">80%</span>
+                    <p id="final-score-subtext" class="text-sm text-slate-500 mt-1">8 out of 10 correct</p>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4 pt-2">
+                    <button onclick="resetToSetup()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-200">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Configure New Session
+                    </button>
+                    <button onclick="reviewMissed()" id="review-missed-btn" class="hidden bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-200">
+                        <i class="fa-solid fa-list-check mr-2"></i> Review Missed Questions
+                    </button>
+                </div>
+            </div>
+
+            <!-- Domain Performance Breakdown -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-4">
+                <h3 class="text-lg font-bold text-slate-900">Performance Breakdown by Domain</h3>
+                <div id="domain-breakdown-container" class="space-y-4">
+                    <!-- Dynamically populated breakdown -->
+                </div>
+            </div>
+
+            <!-- Targeted Study Recommendations -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open text-indigo-600"></i>
+                    <span>Targeted Concepts for Review</span>
+                </h3>
+                <div id="study-recommendations" class="space-y-3 text-sm text-slate-700">
+                    <!-- Dynamically populated recommendations -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-200 mt-auto">
+        ACE CPT Exam Prep Tool &bull; Designed to align with the official ACE Exam Content Outline
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Master Question Bank mapped to ACE CPT Domains
+        const masterQuestionBank = [
+            // DOMAIN I
+            {
+                id: 1,
+                domain: "Domain I",
+                domainName: "Domain I: Client Onboarding and Assessments",
+                tag: "Preparticipation Health Screening",
+                question: "A new client completes the preparticipation health screening questionnaire and reports that he has been diagnosed with mild controlled hypertension but has been asymptomatic and exercising regularly for the past two years. According to current ACSM and ACE guidelines, what is the appropriate course of action?",
+                answerOptions: [
+                    { text: "Require written medical clearance from his physician before starting any exercise program.", isCorrect: false, rationale: "Medical clearance is not necessary for a client who is already a regular exerciser with controlled, asymptomatic cardiovascular disease unless new symptoms arise." },
+                    { text: "Proceed with moderate-intensity exercise programming without requiring medical clearance.", isCorrect: true, rationale: "Correct. Individuals who participate in regular exercise and have controlled, asymptomatic medical conditions do not need medical clearance to continue moderate-intensity exercise." },
+                    { text: "Restrict the client to low-intensity cardiorespiratory exercise only.", isCorrect: false, rationale: "Restrictions are unnecessary since regular, asymptomatic exercise has already been safely established." },
+                    { text: "Refer the client immediately to a physical therapist for diagnostic testing.", isCorrect: false, rationale: "A physical therapist referral is unwarranted for controlled asymptomatic hypertension in a regular exerciser." }
+                ],
+                hint: "Consider whether the client is already a regular exerciser and whether their condition is currently symptomatic or controlled."
+            },
+            {
+                id: 2,
+                domain: "Domain I",
+                domainName: "Domain I: Client Onboarding and Assessments",
+                tag: "Postural Assessments",
+                question: "During a static posture assessment from the lateral view, a personal trainer observes that a client exhibits an anterior pelvic tilt, increased lumbar lordosis, and forward head posture. Which of the following muscles are likely tight or overactive?",
+                answerOptions: [
+                    { text: "Hip flexors and erector spinae", isCorrect: true, rationale: "Correct. An anterior pelvic tilt is commonly caused by tight hip flexors and erector spinae, which pull the pelvis forward and increase lower back curvature." },
+                    { text: "Rectus abdominis and hamstrings", isCorrect: false, rationale: "Rectus abdominis and hamstrings are typically lengthened and underactive in an anterior pelvic tilt posture." },
+                    { text: "Gluteus maximus and deep cervical flexors", isCorrect: false, rationale: "These muscles are typically underactive or lengthened in clients presenting with anterior pelvic tilt and forward head posture." },
+                    { text: "Latissimus dorsi and rhomboids", isCorrect: false, rationale: "While involved in upper body posture, they do not directly cause anterior pelvic tilt." }
+                ],
+                hint: "Think about which muscle groups pull the pelvis anteriorly and exaggerate the lower back curve."
+            },
+            {
+                id: 3,
+                domain: "Domain I",
+                domainName: "Domain I: Client Onboarding and Assessments",
+                tag: "Cardiorespiratory Assessment",
+                question: "When administering a submaximal cardiorespiratory fitness test to a client, which of the following scenarios represents an absolute test-termination criterion?",
+                answerOptions: [
+                    { text: "A slight drop in systolic blood pressure despite an increase in workload.", isCorrect: true, rationale: "Correct. A drop in systolic blood pressure of greater than 10 mmHg despite an increase in workload is an absolute indication to stop an exercise test." },
+                    { text: "The client reports a rating of perceived exertion (RPE) of 16 on the 6-20 scale.", isCorrect: false, rationale: "An RPE of 16 is vigorous, but not an absolute termination criterion unless accompanied by distressing symptoms." },
+                    { text: "Shortness of breath that the client rates as mild and manageable.", isCorrect: false, rationale: "Mild, expected dyspnea during exercise testing does not warrant immediate test termination." },
+                    { text: "A slight increase in heart rate that matches age-predicted maximal norms.", isCorrect: false, rationale: "Reaching predicted heart rate milestones is normal during submaximal or maximal testing." }
+                ],
+                hint: "Look for physiological signs of cardiovascular distress during workload increases."
+            },
+            // DOMAIN II
+            {
+                id: 4,
+                domain: "Domain II",
+                domainName: "Domain II: Program Design and Implementation",
+                tag: "IFT Model - Cardiorespiratory Training",
+                question: "A client successfully establishes a baseline habit of regular exercise and can comfortably talk in full sentences during steady-state cardiorespiratory workouts just below the talk test threshold. According to the ACE Integrated Fitness Training (IFT) model, which phase of cardiorespiratory training should the trainer introduce next?",
+                answerOptions: [
+                    { text: "Phase 1: Aerobic-base Training", isCorrect: false, rationale: "Phase 1 is for building initial exercise habits and is already mastered if the client is transitioning." },
+                    { text: "Phase 2: Aerobic-efficiency Training", isCorrect: true, rationale: "Correct. Phase 2 introduces interval training below and at ventilatory threshold 1 (VT1) to improve aerobic efficiency and endurance." },
+                    { text: "Phase 3: Anaerobic-endurance Training", isCorrect: false, rationale: "Phase 3 is designed for endurance-performance clients training near ventilatory threshold 2 (VT2)." },
+                    { text: "Phase 4: Anaerobic-power Training", isCorrect: false, rationale: "Phase 4 focuses on high-intensity sports performance and power intervals." }
+                ],
+                hint: "After establishing a base in Phase 1, the next step involves introducing intervals around VT1."
+            },
+            {
+                id: 5,
+                domain: "Domain II",
+                domainName: "Domain II: Program Design and Implementation",
+                tag: "Resistance Training Principles",
+                question: "A client wants to maximize muscular hypertrophy. Which of the following resistance training prescription parameters best aligns with current scientific guidelines for hypertrophy?",
+                answerOptions: [
+                    { text: "1 to 5 repetitions per set with 90% 1RM and 3 minutes rest", isCorrect: false, rationale: "This parameter combination is designed for maximal strength and power development, not hypertrophy." },
+                    { text: "6 to 12 repetitions per set with moderate-to-high loads (70-85% 1RM) and 30 to 90 seconds rest", isCorrect: true, rationale: "Correct. Hypertrophy is optimized with moderate repetition ranges (6-12), moderate-to-high loads, and short-to-moderate rest intervals." },
+                    { text: "15 to 25 repetitions per set with low loads (<50% 1RM) and minimal rest", isCorrect: false, rationale: "This range primarily targets local muscular endurance." },
+                    { text: "1 to 3 repetitions per set with explosive velocity and maximum rest", isCorrect: false, rationale: "This targets explosive power." }
+                ],
+                hint: "Hypertrophy requires moderate-to-high mechanical tension and metabolic stress achieved through moderate rep ranges and rest intervals."
+            },
+            {
+                id: 6,
+                domain: "Domain II",
+                domainName: "Domain II: Program Design and Implementation",
+                tag: "Flexibility and Mobility",
+                question: "A personal trainer is designing a warm-up routine for an athletic client prior to a heavy lower-body resistance training session. Which stretching technique is most appropriate to include in this dynamic warm-up?",
+                answerOptions: [
+                    { text: "Static stretching held for 30 to 60 seconds per muscle group", isCorrect: false, rationale: "Prolonged static stretching before power or strength training can temporarily decrease muscular power output and strength." },
+                    { text: "Dynamic stretching utilizing active movements through a full range of motion", isCorrect: true, rationale: "Correct. Dynamic stretching enhances neuromuscular activation and joint mobility without impairing subsequent strength or power." },
+                    { text: "Ballistic bouncing stretches performed rapidly at end-range", isCorrect: false, rationale: "Ballistic bouncing increases injury risk due to unmonitored activation of the stretch reflex." },
+                    { text: "Proprioceptive neuromuscular facilitation (PNF) hold-relax stretching", isCorrect: false, rationale: "PNF stretching is highly effective for increasing flexibility but is generally recommended post-workout rather than pre-workout." }
+                ],
+                hint: "Pre-workout routines should focus on active movements that prepare the nervous system without dampening power."
+            },
+            // DOMAIN III
+            {
+                id: 7,
+                domain: "Domain III",
+                domainName: "Domain III: Ongoing Coaching and Behavior Change",
+                tag: "Transtheoretical Model of Behavior Change",
+                question: "A client tells her personal trainer, 'I know I really need to start exercising to manage my blood pressure, and I bought running shoes last week, but I just haven't figured out when to go.' According to the Transtheoretical Model (Stages of Change), which stage is this client currently in?",
+                answerOptions: [
+                    { text: "Precontemplation", isCorrect: false, rationale: "Clients in precontemplation are not considering change and are unaware or resistant." },
+                    { text: "Contemplation", isCorrect: false, rationale: "Clients in contemplation acknowledge the need to change but have not yet taken tangible steps." },
+                    { text: "Preparation", isCorrect: true, rationale: "Correct. The client has expressed intent, recognized the need, and taken initial steps (buying shoes), placing her in the preparation stage." },
+                    { text: "Action", isCorrect: false, rationale: "The action stage requires actively engaging in the new behavior for less than six months." }
+                ],
+                hint: "The client recognizes the importance of the behavior and has taken small preparatory steps (like purchasing equipment), but hasn't started regular exercise yet."
+            },
+            {
+                id: 8,
+                domain: "Domain III",
+                domainName: "Domain III: Ongoing Coaching and Behavior Change",
+                tag: "Motivational Interviewing",
+                question: "During a goal-setting session, a client expresses frustration that she always quits workout programs after three weeks because she gets bored. Which of the following responses by the personal trainer best exemplifies effective active listening and motivational interviewing?",
+                answerOptions: [
+                    { text: "'You just need more discipline. If you stick with it for six weeks, boredom won't be an issue anymore.'", isCorrect: false, rationale: "This response is dismissive, judgmental, and advice-driven rather than client-centered." },
+                    { text: "'It sounds like maintaining variety and excitement in your workouts is crucial for your long-term consistency. What kinds of activities have you enjoyed in the past?'", isCorrect: true, rationale: "Correct. This validates the client's experience with reflection and uses an open-ended question to foster collaborative problem-solving." },
+                    { text: "'Don't worry about past failures. Let's start a brand new bootcamp routine tomorrow morning.'", isCorrect: false, rationale: "This ignores the client's underlying barrier regarding boredom." },
+                    { text: "'Why do you get bored so easily with exercise?'", isCorrect: false, rationale: "Asking 'why' can put clients on the defensive; open-ended exploratory questions are more effective." }
+                ],
+                hint: "Look for a response that validates the client's feelings and uses open-ended inquiry rather than lecturing."
+            },
+            // DOMAIN IV
+            {
+                id: 9,
+                domain: "Domain IV",
+                domainName: "Domain IV: Professional Practice, Safety, and Risk Management",
+                tag: "Scope of Practice",
+                question: "A regular personal training client mentions during a session that she has been experiencing persistent lower-back pain radiating down her right leg. She asks the personal trainer to diagnose the cause and prescribe specific stretches to fix her sciatica. What is the most appropriate professional response?",
+                answerOptions: [
+                    { text: "Perform diagnostic mobility tests to confirm whether it is sciatica and recommend therapeutic exercises.", isCorrect: false, rationale: "Diagnosing medical conditions and prescribing therapeutic treatments falls outside the personal trainer scope of practice." },
+                    { text: "Explain that diagnosing conditions and prescribing treatments are outside the personal trainer scope of practice, and recommend consulting a qualified healthcare professional.", isCorrect: true, rationale: "Correct. Trainers must stay within their scope of practice, refrain from diagnosis or treatment, and refer clients to medical professionals." },
+                    { text: "Provide a generic anti-inflammatory supplement recommendation and deep-tissue massage.", isCorrect: false, rationale: "Recommending supplements for medical symptoms and providing therapeutic massage are outside a personal trainer's scope." },
+                    { text: "Ignore the complaint and continue with the standard resistance training program.", isCorrect: false, rationale: "Ignoring pain and potential nerve impingement risks client safety." }
+                ],
+                hint: "Remember the boundaries between fitness coaching and licensed medical care."
+            },
+            {
+                id: 10,
+                domain: "Domain IV",
+                domainName: "Domain IV: Professional Practice, Safety, and Risk Management",
+                tag: "Legal and Risk Management",
+                question: "Which of the following legal documents signed by a client acknowledges that the client has been informed of the inherent risks associated with exercise participation and voluntarily assumes responsibility for those risks?",
+                answerOptions: [
+                    { text: "Informed Consent / Assumption of Risk", isCorrect: true, rationale: "Correct. An informed consent form outlines the risks, benefits, and expectations of testing and training, while an assumption of risk documents that the client knowingly accepts those inherent risks." },
+                    { text: "Liability Waiver", isCorrect: false, rationale: "While waivers protect against negligence claims, the specific document detailing inherent risks and voluntary participation is the informed consent / assumption of risk." },
+                    { text: "Medical Clearance Form", isCorrect: false, rationale: "Medical clearance is completed by a physician to confirm medical safety for exercise." },
+                    { text: "Physical Activity Readiness Questionnaire (PAR-Q+)", isCorrect: false, rationale: "The PAR-Q+ is a screening tool used to identify individuals who may need medical clearance." }
+                ],
+                hint: "This document informs the participant about risks and confirms their voluntary acceptance of them."
+            }
+        ];
+
+        // State variables
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let userAnswers = []; // stores { questionId, selectedOption, isCorrect, domain }
+
+        function startQuiz() {
+            // Get selected domains
+            const checkboxes = document.querySelectorAll('input[name="domain-select"]:checked');
+            const selectedDomains = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedDomains.length === 0) {
+                alert("Please select at least one domain to begin.");
+                return;
+            }
+
+            // Filter questions based on selected domains
+            let filtered = masterQuestionBank.filter(q => selectedDomains.includes(q.domain));
+
+            if (filtered.length === 0) {
+                alert("No questions found for the selected domains.");
+                return;
+            }
+
+            // Shuffle filtered questions
+            filtered.sort(() => Math.random() - 0.5);
+
+            // Determine question count
+            const countSelect = document.getElementById('question-count').value;
+            let limit = countSelect === 'all' ? filtered.length : parseInt(countSelect);
+            activeQuestions = filtered.slice(0, Math.min(limit, filtered.length));
+
+            // Reset state
+            currentIndex = 0;
+            score = 0;
+            userAnswers = [];
+
+            // Switch views
+            document.getElementById('view-setup').classList.add('hidden');
+            document.getElementById('view-results').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
+            document.getElementById('header-status').innerText = "Session in Progress";
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = activeQuestions[currentIndex];
+            
+            // Update header / counter
+            document.getElementById('quiz-domain-tag').innerText = q.domainName;
+            document.getElementById('question-counter').innerText = `Question ${currentIndex + 1} of ${activeQuestions.length}`;
+            
+            // Update progress bar
+            const progressPercent = ((currentIndex + 1) / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Display question text
+            document.getElementById('question-text').innerText = q.question;
+
+            // Render options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.answerOptions.forEach((opt, idx) => {
+                const label = document.createElement('label');
+                label.className = "flex items-start p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 cursor-pointer transition option-card";
+                label.innerHTML = `
+                    <input type="radio" name="quiz-option" value="${idx}" class="mt-1 h-5 w-5 text-indigo-600 border-slate-300 focus:ring-indigo-500">
+                    <span class="ml-3 text-slate-700 font-medium">${opt.text}</span>
+                `;
+                label.onclick = () => {
+                    // Highlight selected card
+                    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('border-indigo-600', 'bg-indigo-50/50'));
+                    label.classList.add('border-indigo-600', 'bg-indigo-50/50');
+                };
+                container.appendChild(label);
+            });
+
+            // Reset feedback & action button
+            document.getElementById('feedback-box').classList.add('hidden');
+            const actionBtn = document.getElementById('action-btn');
+            actionBtn.innerText = "Submit Answer";
+            actionBtn.onclick = handleSubmission;
+            actionBtn.disabled = false;
+        }
+
+        function handleSubmission() {
+            const selectedRadio = document.querySelector('input[name="quiz-option"]:checked');
+            if (!selectedRadio) {
+                alert("Please select an answer choice before submitting.");
+                return;
+            }
+
+            const selectedIdx = parseInt(selectedRadio.value);
+            const q = activeQuestions[currentIndex];
+            const chosenOption = q.answerOptions[selectedIdx];
+
+            // Disable radio inputs after submission
+            document.querySelectorAll('input[name="quiz-option"]').forEach(r => r.disabled = true);
+
+            // Record answer
+            const isCorrect = chosenOption.isCorrect;
+            if (isCorrect) score++;
+
+            userAnswers.push({
+                questionId: q.id,
+                domain: q.domain,
+                tag: q.tag,
+                isCorrect: isCorrect,
+                question: q.question,
+                chosenText: chosenOption.text,
+                rationale: chosenOption.rationale
+            });
+
+            // Style options based on correctness
+            const optionCards = document.querySelectorAll('.option-card');
+            q.answerOptions.forEach((opt, idx) => {
+                if (opt.isCorrect) {
+                    optionCards[idx].classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                } else if (idx === selectedIdx && !opt.isCorrect) {
+                    optionCards[idx].classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                }
+            });
+
+            // Show feedback box
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.remove('hidden');
+            const titleEl = document.getElementById('feedback-title');
+            const iconEl = document.getElementById('feedback-icon');
+            const headingTextEl = document.getElementById('feedback-heading-text');
+            const rationaleEl = document.getElementById('feedback-rationale');
+
+            if (isCorrect) {
+                feedbackBox.className = "rounded-xl p-5 border bg-emerald-50 border-emerald-200 text-emerald-900 transition-all";
+                titleEl.className = "flex items-center space-x-2 mb-2 font-bold text-base text-emerald-800";
+                iconEl.className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+                headingTextEl.innerText = "Correct!";
+            } else {
+                feedbackBox.className = "rounded-xl p-5 border bg-rose-50 border-rose-200 text-rose-900 transition-all";
+                titleEl.className = "flex items-center space-x-2 mb-2 font-bold text-base text-rose-800";
+                iconEl.className = "fa-solid fa-circle-xmark text-rose-600 text-lg";
+                headingTextEl.innerText = "Incorrect";
+            }
+            rationaleEl.innerText = chosenOption.rationale;
+
+            // Change button for next step
+            const actionBtn = document.getElementById('action-btn');
+            if (currentIndex < activeQuestions.length - 1) {
+                actionBtn.innerText = "Next Question";
+                actionBtn.onclick = () => {
+                    currentIndex++;
+                    loadQuestion();
+                };
+            } else {
+                actionBtn.innerText = "View Final Results";
+                actionBtn.onclick = showResults;
+            }
+        }
+
+        function showResults() {
+            document.getElementById('view-quiz').classList.add('hidden');
+            document.getElementById('view-results').classList.remove('hidden');
+            document.getElementById('header-status').innerText = "Session Complete";
+
+            const percentage = Math.round((score / activeQuestions.length) * 100);
+            document.getElementById('final-score-display').innerText = `${percentage}%`;
+            document.getElementById('final-score-subtext').innerText = `${score} out of ${activeQuestions.length} correct`;
+
+            // Check if there are missed questions to review
+            const missedCount = userAnswers.filter(a => !a.isCorrect).length;
+            const reviewBtn = document.getElementById('review-missed-btn');
+            if (missedCount > 0) {
+                reviewBtn.classList.remove('hidden');
+            } else {
+                reviewBtn.classList.add('hidden');
+            }
+
+            // Calculate domain breakdown
+            const domainStats = {};
+            userAnswers.forEach(ans => {
+                if (!domainStats[ans.domain]) {
+                    domainStats[ans.domain] = { total: 0, correct: 0 };
+                }
+                domainStats[ans.domain].total++;
+                if (ans.isCorrect) domainStats[ans.domain].correct++;
+            });
+
+            const breakdownContainer = document.getElementById('domain-breakdown-container');
+            breakdownContainer.innerHTML = '';
+
+            for (const [domainKey, stats] of Object.entries(domainStats)) {
+                const domPercent = Math.round((stats.correct / stats.total) * 100);
+                const item = document.createElement('div');
+                item.className = "space-y-1";
+                item.innerHTML = `
+                    <div class="flex justify-between text-sm font-semibold">
+                        <span class="text-slate-800">${domainKey}</span>
+                        <span class="${domPercent >= 70 ? 'text-emerald-600' : 'text-amber-600'}">${domPercent}% (${stats.correct}/${stats.total})</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div class="${domPercent >= 70 ? 'bg-emerald-500' : 'bg-amber-500'} h-2 rounded-full" style="width: ${domPercent}%"></div>
+                    </div>
+                `;
+                breakdownContainer.appendChild(item);
+            }
+
+            // Generate study recommendations based on missed tags
+            const missedTags = [...new Set(userAnswers.filter(a => !a.isCorrect).map(a => a.tag))];
+            const recommendationsContainer = document.getElementById('study-recommendations');
+            recommendationsContainer.innerHTML = '';
+
+            if (missedTags.length === 0) {
+                recommendationsContainer.innerHTML = `
+                    <div class="flex items-center space-x-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800">
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                        <span>Outstanding performance! You answered all questions correctly across your tested domains. Keep maintaining your readiness across all ACE chapters.</span>
+                    </div>
+                `;
+            } else {
+                missedTags.forEach(tag => {
+                    const recItem = document.createElement('div');
+                    recItem.className = "flex items-start space-x-3 p-3 bg-slate-50 border border-slate-200 rounded-xl";
+                    recItem.innerHTML = `
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+                        <div>
+                            <span class="font-bold text-slate-900 block">${tag}</span>
+                            <span class="text-xs text-slate-600">Review your ACE textbook chapters related to ${tag} to solidify your knowledge and application guidelines.</span>
+                        </div>
+                    `;
+                    recommendationsContainer.appendChild(recItem);
+                });
+            }
+        }
+
+        function resetToSetup() {
+            document.getElementById('view-results').classList.add('hidden');
+            document.getElementById('view-setup').classList.remove('hidden');
+            document.getElementById('header-status').innerText = "Setup Mode";
+        }
+
+        function reviewMissed() {
+            // Filter activeQuestions to only those answered incorrectly
+            const missedIds = userAnswers.filter(a => !a.isCorrect).map(a => a.questionId);
+            activeQuestions = masterQuestionBank.filter(q => missedIds.includes(q.id));
+
+            currentIndex = 0;
+            score = 0;
+            userAnswers = [];
+
+            document.getElementById('view-results').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
+            document.getElementById('header-status').innerText = "Reviewing Missed Questions";
+
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
